@@ -1,11 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-//using System.Diagnostics;
-using UnityEditor;
-using UnityEditor.Experimental.TerrainAPI;
+﻿//using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Experimental.TerrainAPI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,22 +11,25 @@ public class PlayerController : MonoBehaviour
     //0 means player at the center;
     //1 means player at the right;
     int location;
+    //target olabilecek 3 farklı nokta
     Vector3 leftPos, rightPos, centerPos;
+    //sağa ve sola kaç birim
     float distance = 2;
+    //x eksenindeki hız
     float lateralSpeed = 10;
-    public int jumpForce = 30;
+    //eğer karakter hareketliyse
+    //kullanıcı girdilerini yok saymak için kullanılır
     bool isMoving;
+    //kullanıcı girdilerin karşılık değişir
+    //obje her frame targete ulaşmaya çalışır
+    //eğer targetteyse durur.
     Vector3 targetPos;
-    Vector3 beganFinger;
-    Vector3 endedFinger;
-    bool isJumping;
     float jumpDistance;
-
-    public int energy{set;get;}
+    //item toplandıkça artacak olan energy 
+    public int energy{set; get;}
     private void Awake()
     {
         jumpDistance = 0;
-        isJumping = false;
         centerPos = transform.position;
         leftPos = centerPos - new Vector3(distance, 0, 0);
         rightPos = centerPos + new Vector3(distance, 0, 0);
@@ -44,12 +42,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-           
+        //frame başına bir kaç kere çağrılır ve hedefe doğru gider,
+        //hedefi asla geçmez
         transform.position = Vector3.MoveTowards(transform.position, targetPos + new Vector3(0, jumpDistance,0), Time.fixedDeltaTime * lateralSpeed);
         if (transform.position.Equals(targetPos))
         {
             isMoving = false;
         }
+        //if player at the peek point of jump
         if(transform.position.y == centerPos.y + jumpDistance)
         {
             jumpDistance = 0;
@@ -58,29 +58,11 @@ public class PlayerController : MonoBehaviour
         {
             if (!isMoving && (Input.touchCount > 0))
             {
-
-
-                /*if (touch.phase == TouchPhase.Began)
-                {
-                    beganFinger = touch.position;
-                }
-                if (touch.phase == TouchPhase.Ended)
-                {
-                    endedFinger = touch.position;
-                    if (beganFinger.y < endedFinger.y)
-                    {
-                        if (IsGrounded())
-                        {
-                            Jump();
-                        }
-                    }
-                }*/
-
                 Touch touch = Input.GetTouch(0);
 
                 if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
                 {
-                    // you touched at least one UI element
+                    // User touch the UI element
                     return;
                 }
                 //if the user touched left side of the screen
@@ -116,14 +98,14 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
+    //buton tıklanınca çağrılan fonksiyon
     public void Jump()
     {
         if (IsGrounded())
             jumpDistance = 2.5f; 
 
     }
-
+    //karakterin yerde olup olmadığını kontrol eder
     bool IsGrounded()
     {
         if (Physics.Raycast(transform.position, -Vector3.up, transform.localScale.y + 0.1f, mask))

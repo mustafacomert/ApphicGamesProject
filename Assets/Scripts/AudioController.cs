@@ -8,7 +8,9 @@ public class AudioController : MonoBehaviour
     void Awake()
     {
         if (PlayerPrefs.GetInt("isSoundOn") == 0)
-            gameObject.GetComponent<AudioSource>().enabled = false;
-
+        {
+            foreach(var i in gameObject.GetComponents<AudioSource>())
+                i.enabled = false;
+        }
     }
 }

@@ -17,7 +17,7 @@ public class HeartController : MonoBehaviour
     public int currentHeartCount { set;  get; }
 
     private List<GameObject> heartsList;
-    private void Awake()
+    public void Awake()
     {
         //second parameter is default value = maxHeartCount 
         currentHeartCount = PlayerPrefs.GetInt("currentHeartCount", maxHeartCount);
